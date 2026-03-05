@@ -6,16 +6,21 @@ use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\CustomerCollection;
 use App\Models\Customer;
+use App\Filters\CustomerFilter;
+use Symfony\Component\HttpFoundation\Request;
 
 class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $customer = Customer::paginate();
-        return new CustomerCollection($customer);
+        $filter = new CustomerFilter();
+        $queryItems = $filter->transform($request);
+
+        $customer = Customer::where($queryItems);
+        return new CustomerCollection($customer->paginate(10)->appends($request->query()));
     }
 
     /**
