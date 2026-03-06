@@ -10,6 +10,7 @@ class ApiFilter{
     public function transform(Request $request){
         $eloquentQuery = [];
         foreach($this->safeParms as $parm => $operators){
+            
             $query = $request->query($parm);
             if(!isset($query)){
                 continue;
@@ -17,11 +18,8 @@ class ApiFilter{
             
             $column = $this->columnMap[$parm] ?? $parm;
             foreach($operators as $operator){
-                
                 if(isset($query[$operator])){
-                    
                     $eloquentQuery[] = [$column, $this->operatorMap[$operator],$operator == 'lk'? '%'.$query[$operator].'%' : $query[$operator]];
-                    
                 }
             }
         }

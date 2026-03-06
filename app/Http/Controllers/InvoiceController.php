@@ -6,16 +6,24 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceCollection;
 use App\Models\Invoice;
+use App\Filters\InvoiceFilter;
+use Symfony\Component\HttpFoundation\Request;
 
 class InvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $invoices = Invoice::paginate();
-        return new InvoiceCollection($invoices);
+    public function index(Request $request)
+    {   
+        $filter = new InvoiceFilter();
+        $queryItems = $filter->transform($request);
+
+        
+        $invoices = Invoice::where($queryItems)->paginate(10);
+        return new InvoiceCollection($invoices->appends($request->query()));
+        
+        
     }
 
     /**

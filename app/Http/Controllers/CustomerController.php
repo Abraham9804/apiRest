@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\CustomerCollection;
+use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Filters\CustomerFilter;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,9 +19,15 @@ class CustomerController extends Controller
     {
         $filter = new CustomerFilter();
         $queryItems = $filter->transform($request);
+        $includeInvoices = $request->query('includeInvoices');
 
-        $customer = Customer::where($queryItems);
-        return new CustomerCollection($customer->paginate(10)->appends($request->query()));
+        $customers = Customer::where($queryItems);
+        if($includeInvoices == 'true') {
+            $customers = $customers->with('invoices');
+        }
+
+        
+        return new CustomerCollection($customers->paginate(10)->appends($request->query()));
     }
 
     /**
@@ -44,7 +51,7 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        //
+        return new CustomerResource($customer);
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php 
 namespace App\Filters;
-
-
 use App\Filters\ApiFilter;
+
+
 
 class CustomerFilter extends ApiFilter{
     protected $safeParms = [
