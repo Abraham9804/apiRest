@@ -43,7 +43,7 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        //
+        
     }
 
     /**
@@ -51,6 +51,9 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
+        if(request()->boolean('includeInvoices')) {
+            return new CustomerResource($customer->loadMissing('invoices'));
+        }
         return new CustomerResource($customer);
     }
 
